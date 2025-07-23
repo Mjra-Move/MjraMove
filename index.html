@@ -6,79 +6,79 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background-color: #121212;
       color: #fff;
       display: flex;
+      flex-direction: column;
       min-height: 100vh;
     }
 
-    .sidebar {
-      width: 300px;
+    header {
       background-color: #1f1f1f;
-      padding: 20px;
-      box-shadow: 0 0 10px #000;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .content {
-      flex-grow: 1;
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    h2 {
-      margin-top: 0;
-      color: #00bcd4;
-    }
-
-    input, select {
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
+    header input {
+      padding: 8px;
+      width: 200px;
       border-radius: 5px;
       border: none;
       background-color: #2c2c2c;
       color: #fff;
     }
 
-    button {
-      padding: 10px;
-      width: 100%;
-      background-color: #00bcd4;
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px;
+    }
+
+    .categories button {
+      background-color: #333;
       border: none;
-      border-radius: 5px;
-      color: #000;
-      font-weight: bold;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 20px;
       cursor: pointer;
     }
 
-    button:hover {
-      background-color: #0097a7;
+    .categories button.active,
+    .categories button:hover {
+      background-color: #00bcd4;
+      color: #000;
     }
 
     .movie-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+      padding: 20px;
+      flex-grow: 1;
     }
 
     .movie-box {
       background-color: #1e1e1e;
       border-radius: 10px;
-      overflow: hidden;
-      text-align: center;
       padding: 10px;
+      text-align: center;
     }
 
     .movie-box img {
       width: 100%;
-      height: 250px;
+      height: 220px;
       object-fit: cover;
-      border-radius: 8px;
+      border-radius: 6px;
     }
 
     .movie-box h3 {
-      margin: 10px 0 5px;
+      margin: 8px 0 4px;
+      font-size: 1em;
     }
 
     .movie-box p {
@@ -89,31 +89,97 @@
 
     .movie-box time {
       display: block;
-      margin-top: 5px;
+      font-size: 0.8em;
       color: #888;
     }
 
-    .form-title {
-      margin-bottom: 10px;
+    .admin-panel {
+      display: none;
+      padding: 20px;
+      background-color: #1b1b1b;
+      border-top: 1px solid #333;
     }
 
-    @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-      }
-      .sidebar {
-        width: 100%;
-        box-shadow: none;
-      }
+    .admin-panel input, .admin-panel select {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #2a2a2a;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+    }
+
+    .admin-panel button {
+      width: 100%;
+      background-color: #00bcd4;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #000;
+    }
+
+    .toggle-admin {
+      background: none;
+      color: #00bcd4;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    footer {
+      background-color: #1a1a1a;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      position: sticky;
+      bottom: 0;
+    }
+
+    footer button {
+      flex: 1;
+      padding: 10px;
+      background: #222;
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    footer button.active {
+      background: #00bcd4;
+      color: #000;
     }
   </style>
 </head>
 <body>
 
-  <!-- لوحة الإدارة -->
-  <div class="sidebar">
-    <h2>إضافة فيلم</h2>
-    <form id="add-movie-form">
+  <!-- Header -->
+  <header>
+    <input type="search" id="searchInput" placeholder="ابحث عن فيلم...">
+    <button class="toggle-admin" onclick="toggleAdmin()">+ إدارة الأفلام</button>
+  </header>
+
+  <!-- التصنيفات -->
+  <div class="categories" id="categoryButtons">
+    <button class="active" onclick="filterMovies('الكل')">الكل</button>
+    <button onclick="filterMovies('أكشن')">أكشن</button>
+    <button onclick="filterMovies('دراما')">دراما</button>
+    <button onclick="filterMovies('كوميديا')">كوميديا</button>
+    <button onclick="filterMovies('خيال علمي')">خيال علمي</button>
+  </div>
+
+  <!-- عرض الأفلام -->
+  <div class="movie-grid" id="moviesContainer">
+    <!-- يتم ملؤها تلقائيًا -->
+  </div>
+
+  <!-- صفحة الإدارة -->
+  <div class="admin-panel" id="adminPanel">
+    <h3>إضافة فيلم جديد</h3>
+    <form id="addMovieForm">
       <input type="text" name="title" placeholder="اسم الفيلم" required>
       <input type="url" name="poster" placeholder="رابط الصورة" required>
       <select name="genre" required>
@@ -124,67 +190,81 @@
         <option value="خيال علمي">خيال علمي</option>
       </select>
       <input type="datetime-local" name="showtime" required>
-      <button type="submit">إضافة الفيلم</button>
+      <button type="submit">إضافة</button>
     </form>
   </div>
 
-  <!-- عرض الأفلام -->
-  <div class="content">
-    <h2>قائمة الأفلام</h2>
-    <div id="movies-container" class="movie-grid">
-      <!-- سيتم تحميل الأفلام هنا -->
-    </div>
-  </div>
+  <!-- شريط التنقل السفلي -->
+  <footer>
+    <button onclick="window.location.href='signup.html'">👤 إنشاء حساب</button>
+    <button class="active">🎬 الأفلام</button>
+  </footer>
 
   <script>
+    let allMovies = [];
+
     async function fetchMovies() {
-      try {
-        const res = await fetch('/api/movies');
-        const movies = await res.json();
-        const container = document.getElementById('movies-container');
-        container.innerHTML = "";
-        movies.forEach(movie => {
-          const box = document.createElement('div');
-          box.className = 'movie-box';
-          box.innerHTML = `
-            <img src="${movie.poster}" alt="${movie.title}">
-            <h3>${movie.title}</h3>
-            <p>${movie.genre}</p>
-            <time>العرض: ${new Date(movie.showtime).toLocaleString('ar-IQ')}</time>
-          `;
-          container.appendChild(box);
-        });
-      } catch (error) {
-        console.error("فشل تحميل الأفلام", error);
+      const res = await fetch('/api/movies');
+      allMovies = await res.json();
+      displayMovies(allMovies);
+    }
+
+    function displayMovies(movies) {
+      const container = document.getElementById('moviesContainer');
+      container.innerHTML = "";
+      movies.forEach(movie => {
+        const box = document.createElement('div');
+        box.className = 'movie-box';
+        box.innerHTML = `
+          <img src="${movie.poster}" alt="${movie.title}">
+          <h3>${movie.title}</h3>
+          <p>${movie.genre}</p>
+          <time>العرض: ${new Date(movie.showtime).toLocaleString('ar-IQ')}</time>
+        `;
+        container.appendChild(box);
+      });
+    }
+
+    function toggleAdmin() {
+      const panel = document.getElementById('adminPanel');
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function filterMovies(genre) {
+      document.querySelectorAll('.categories button').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      if (genre === 'الكل') {
+        displayMovies(allMovies);
+      } else {
+        displayMovies(allMovies.filter(m => m.genre === genre));
       }
     }
 
-    document.getElementById('add-movie-form').addEventListener('submit', async (e) => {
+    document.getElementById('addMovieForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
       const movie = Object.fromEntries(formData.entries());
 
-      try {
-        const res = await fetch('/api/movies', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(movie)
-        });
+      const res = await fetch('/api/movies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(movie)
+      });
 
-        if (res.ok) {
-          alert('تمت إضافة الفيلم بنجاح!');
-          e.target.reset();
-          fetchMovies();
-        } else {
-          alert('حدث خطأ أثناء الإضافة.');
-        }
-      } catch (err) {
-        alert('فشل الاتصال بالخادم.');
-        console.error(err);
+      if (res.ok) {
+        alert("تمت إضافة الفيلم!");
+        e.target.reset();
+        fetchMovies();
+      } else {
+        alert("فشل في الإضافة.");
       }
     });
 
-    // تحميل الأفلام عند التشغيل
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const keyword = e.target.value.toLowerCase();
+      displayMovies(allMovies.filter(m => m.title.toLowerCase().includes(keyword)));
+    });
+
     fetchMovies();
   </script>
 
