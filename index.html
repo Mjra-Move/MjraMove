@@ -2,36 +2,49 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>موقع مشاهدة الأفلام</title>
+  <title>موقع أفلام</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
       background-color: #121212;
       color: white;
     }
 
     header {
       text-align: center;
-      padding: 1rem;
-      background-color: #1f1f1f;
+      background: #1e1e1e;
+      padding: 10px;
+    }
+
+    .page {
+      display: none;
+      padding: 10px;
+    }
+
+    .active {
+      display: block;
     }
 
     .movie-grid {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      padding: 1rem;
+      gap: 10px;
     }
 
     .movie-card {
-      background-color: #1e1e1e;
-      margin: 10px;
-      padding: 10px;
-      border-radius: 8px;
-      width: 160px;
+      background-color: #2a2a2a;
+      width: 45%;
+      border-radius: 15px;
+      overflow: hidden;
       cursor: pointer;
-      transition: transform 0.2s;
+      transition: transform 0.3s;
     }
 
     .movie-card:hover {
@@ -40,141 +53,196 @@
 
     .movie-card img {
       width: 100%;
-      border-radius: 5px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 15px 15px 0 0;
     }
 
     .movie-card h3 {
-      font-size: 1rem;
       text-align: center;
-    }
-
-    .movie-details {
-      padding: 1rem;
-      display: none;
-      text-align: center;
-    }
-
-    .movie-details iframe {
-      width: 90%;
-      height: 200px;
-      margin-bottom: 10px;
-    }
-
-    .watch-button {
-      background-color: #e50914;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      font-size: 1rem;
-      border-radius: 5px;
-      cursor: pointer;
+      font-size: 14px;
+      margin: 10px 0;
     }
 
     .bottom-bar {
       position: fixed;
       bottom: 0;
       left: 0;
-      right: 0;
-      background-color: #1f1f1f;
+      width: 100%;
+      background-color: #1e1e1e;
       display: flex;
       justify-content: space-around;
       padding: 10px 0;
+      border-top: 1px solid #333;
     }
 
     .bottom-bar button {
       background: none;
       border: none;
       color: white;
-      font-size: 1rem;
+      font-size: 14px;
       cursor: pointer;
     }
 
-    .hidden {
-      display: none;
+    .details, .account, .search, .categories {
+      text-align: center;
+    }
+
+    .account img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 20px 0;
+    }
+
+    .search input {
+      width: 90%;
+      padding: 8px;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 15px;
+    }
+
+    .category-group {
+      margin-bottom: 20px;
+    }
+
+    .category-group h4 {
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
+    }
+
+    @media (max-width: 600px) {
+      .movie-card {
+        width: 45%;
+      }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>📽️ موقع مشاهدة الأفلام</h1>
+  <h2>🎬 موقع مشاهدة الأفلام</h2>
 </header>
 
-<!-- واجهة عرض الأفلام -->
-<div id="homePage" class="movie-grid">
-  <div class="movie-card" onclick="showDetails('fantastic')">
-    <img src="https://m.media-amazon.com/images/M/MV5BNzY1NzcxNjE2M15BMl5BanBnXkFtZTgwNjg5NDkzNjE@._V1_.jpg" alt="فنتاستك فور">
-    <h3>فنتاستك فور</h3>
+<!-- صفحة الرئيسية -->
+<div id="homePage" class="page active">
+  <div class="movie-grid" id="mainGrid"></div>
+</div>
+
+<!-- صفحة تفاصيل -->
+<div id="detailsPage" class="page details"></div>
+
+<!-- صفحة الحساب -->
+<div id="accountPage" class="page account">
+  <img src="https://i.imgur.com/2yaf2wb.png" alt="الحساب">
+  <h3>اسم المستخدم: محمد العراقي</h3>
+  <p>الحالة: مفعل ✅</p>
+  <p>مدة الاشتراك: 30 يوم</p>
+</div>
+
+<!-- صفحة البحث -->
+<div id="searchPage" class="page search">
+  <input type="text" id="searchInput" placeholder="ابحث عن فيلم...">
+  <div class="movie-grid" id="searchGrid"></div>
+</div>
+
+<!-- صفحة التصنيفات -->
+<div id="categoriesPage" class="page categories" style="text-align:right;">
+  <div class="category-group">
+    <h4>🦸‍♂️ أفلام أكشن</h4>
+    <div class="movie-grid" id="actionGrid"></div>
   </div>
-  <div class="movie-card" onclick="showDetails('nekadken')">
-    <img src="https://i.imgur.com/nkYdken.png" alt="نكدكن">
-    <h3>نكدكن</h3>
-  </div>
-  <div class="movie-card" onclick="showDetails('shater')">
-    <img src="https://i.imgur.com/shater.png" alt="الشاطر">
-    <h3>الشاطر</h3>
-  </div>
-  <div class="movie-card" onclick="showDetails('badboys')">
-    <img src="https://m.media-amazon.com/images/M/MV5BNDE0Y2FkMjgtYmEzOS00OTcwLWI3ZjgtZGEzZTBiZjdmZDU0XkEyXkFqcGdeQXVyMjQzMzQzODY@._V1_.jpg" alt="باد كايز">
-    <h3>باد كايز</h3>
+  <div class="category-group">
+    <h4>🎭 أفلام دراما</h4>
+    <div class="movie-grid" id="dramaGrid"></div>
   </div>
 </div>
 
-<!-- تفاصيل الفيلم -->
-<div id="movieDetails" class="movie-details"></div>
-
-<!-- شريط التنقل السفلي -->
+<!-- الشريط السفلي -->
 <div class="bottom-bar">
-  <button onclick="navigate('home')">🏠 الرئيسية</button>
-  <button onclick="navigate('search')">🔍 البحث</button>
-  <button onclick="navigate('categories')">🎞️ التصنيفات</button>
-  <button onclick="navigate('account')">👤 الحساب</button>
+  <button onclick="showPage('homePage')">🏠 الرئيسية</button>
+  <button onclick="showPage('searchPage')">🔍 بحث</button>
+  <button onclick="showPage('categoriesPage')">🎞️ تصنيفات</button>
+  <button onclick="showPage('accountPage')">👤 الحساب</button>
 </div>
 
 <script>
-  const movies = {
-    fantastic: {
-      name: 'فنتاستك فور',
-      img: 'https://m.media-amazon.com/images/M/MV5BNzY1NzcxNjE2M15BMl5BanBnXkFtZTgwNjg5NDkzNjE@._V1_.jpg',
-      trailer: 'https://www.youtube.com/embed/POBI7OhGB18',
-      full: 'https://example.com/fantastic.mp4'
+  const movies = [
+    {
+      id: "f1",
+      title: "فنتاستك فور",
+      img: "https://m.media-amazon.com/images/M/MV5BNzY1NzcxNjE2M15BMl5BanBnXkFtZTgwNjg5NDkzNjE@._V1_.jpg",
+      category: "أكشن",
+      trailer: "https://www.youtube.com/embed/POBI7OhGB18"
     },
-    nekadken: {
-      name: 'نكدكن',
-      img: 'https://i.imgur.com/nkYdken.png',
-      trailer: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-      full: 'https://example.com/nekadken.mp4'
+    {
+      id: "f2",
+      title: "نكدكن",
+      img: "https://i.imgur.com/nkYdken.png",
+      category: "دراما",
+      trailer: "https://www.youtube.com/embed/dQw4w9WgXcQ"
     },
-    shater: {
-      name: 'الشاطر',
-      img: 'https://i.imgur.com/shater.png',
-      trailer: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-      full: 'https://example.com/shater.mp4'
+    {
+      id: "f3",
+      title: "الشاطر",
+      img: "https://i.imgur.com/shater.png",
+      category: "دراما",
+      trailer: "https://www.youtube.com/embed/dQw4w9WgXcQ"
     },
-    badboys: {
-      name: 'باد كايز',
-      img: 'https://m.media-amazon.com/images/M/MV5BNDE0Y2FkMjgtYmEzOS00OTcwLWI3ZjgtZGEzZTBiZjdmZDU0XkEyXkFqcGdeQXVyMjQzMzQzODY@._V1_.jpg',
-      trailer: 'https://www.youtube.com/embed/jKCj3XuPG8M',
-      full: 'https://example.com/badboys.mp4'
+    {
+      id: "f4",
+      title: "باد كايز",
+      img: "https://m.media-amazon.com/images/M/MV5BNDE0Y2FkMjgtYmEzOS00OTcwLWI3ZjgtZGEzZTBiZjdmZDU0XkEyXkFqcGdeQXVyMjQzMzQzODY@._V1_.jpg",
+      category: "أكشن",
+      trailer: "https://www.youtube.com/embed/jKCj3XuPG8M"
     }
-  };
+  ];
 
-  function showDetails(key) {
-    const movie = movies[key];
-    document.getElementById('homePage').style.display = 'none';
+  function renderMovies(containerId, filterFn = null) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    movies
+      .filter(movie => filterFn ? filterFn(movie) : true)
+      .forEach(movie => {
+        const card = document.createElement('div');
+        card.className = 'movie-card';
+        card.innerHTML = `
+          <img src="${movie.img}" alt="${movie.title}">
+          <h3>${movie.title}</h3>
+        `;
+        card.onclick = () => showDetails(movie);
+        container.appendChild(card);
+      });
+  }
 
-    document.getElementById('movieDetails').innerHTML = `
-      <h2>${movie.name}</h2>
+  function showDetails(movie) {
+    showPage('detailsPage');
+    const details = document.getElementById('detailsPage');
+    details.innerHTML = `
+      <h2>${movie.title}</h2>
       <img src="${movie.img}" width="200"><br><br>
-      <iframe src="${movie.trailer}" frameborder="0" allowfullscreen></iframe><br>
-      <button class="watch-button" onclick="window.open('${movie.full}', '_blank')">🎬 مشاهدة الفيلم</button>
+      <iframe width="90%" height="200" src="${movie.trailer}" frameborder="0" allowfullscreen></iframe><br><br>
+      <button onclick="alert('🎬 يتم الآن تشغيل الفيلم الكامل')">مشاهدة الفيلم</button>
     `;
-    document.getElementById('movieDetails').style.display = 'block';
   }
 
-  function navigate(page) {
-    alert(`تم الضغط على: ${page}`);
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
   }
+
+  // تصنيف الأفلام
+  renderMovies('mainGrid');
+  renderMovies('searchGrid');
+  renderMovies('actionGrid', m => m.category === 'أكشن');
+  renderMovies('dramaGrid', m => m.category === 'دراما');
+
+  // البحث
+  document.getElementById('searchInput').addEventListener('input', e => {
+    const val = e.target.value.trim();
+    renderMovies('searchGrid', m => m.title.includes(val));
+  });
 </script>
 
 </body>
