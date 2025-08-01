@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>إدارة الأفلام</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #121212;
+      color: white;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      background-color: #1f1f1f;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 10px;
+      background: #2a2a2a;
+      color: white;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #e50914;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .movie-list {
+      margin-top: 30px;
+    }
+
+    .movie-card {
+      background-color: #2a2a2a;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    .movie-card img {
+      height: 80px;
+      width: auto;
+      border-radius: 6px;
+    }
+
+    .back-link {
+      display: block;
+      margin: 20px 0;
+      text-align: center;
+      color: #00ccff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+<h2>⚙️ إدارة الأفلام</h2>
+
+<a href="index.html" class="back-link">⬅️ العودة إلى الموقع</a>
+
+<form id="movieForm">
+  <label>اسم الفيلم</label>
+  <input type="text" id="title" required>
+
+  <label>رابط صورة الفيلم</label>
+  <input type="url" id="img" required>
+
+  <label>رابط التريلر (YouTube)</label>
+  <input type="url" id="trailer">
+
+  <label>التصنيف</label>
+  <select id="category" required>
+    <option value="أكشن">أكشن</option>
+    <option value="دراما">دراما</option>
+    <option value="كوميديا">كوميديا</option>
+    <option value="رعب">رعب</option>
+  </select>
+
+  <button type="submit">➕ إضافة الفيلم</button>
+</form>
+
+<div class="movie-list" id="movieList">
+  <h3>📋 قائمة الأفلام المضافة:</h3>
+  <!-- ستظهر هنا الأفلام الجديدة -->
+</div>
+
+<script>
+  const form = document.getElementById('movieForm');
+  const list = document.getElementById('movieList');
+
+  let movies = JSON.parse(localStorage.getItem("myMovies")) || [];
+
+  function renderMovies() {
+    list.innerHTML = '<h3>📋 قائمة الأفلام المضافة:</h3>';
+    movies.forEach(movie => {
+      const div = document.createElement('div');
+      div.className = "movie-card";
+      div.innerHTML = `
+        <strong>${movie.title}</strong><br>
+        <img src="${movie.img}" alt="${movie.title}">
+        <p>تصنيف: ${movie.category}</p>
+        <p><a href="${movie.trailer}" style="color:lightblue;" target="_blank">🎞️ تريلر</a></p>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    const newMovie = {
+      title: document.getElementById('title').value,
+      img: document.getElementById('img').value,
+      trailer: document.getElementById('trailer').value || '#',
+      category: document.getElementById('category').value
+    };
+    movies.push(newMovie);
+    localStorage.setItem("myMovies", JSON.stringify(movies));
+    form.reset();
+    renderMovies();
+  };
+
+  renderMovies();
+</script>
+
+</body>
+</html>
