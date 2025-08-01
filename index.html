@@ -2,271 +2,180 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>إدارة وعرض الأفلام</title>
+  <title>موقع مشاهدة الأفلام</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: Arial, sans-serif;
       background-color: #121212;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+      color: white;
     }
 
     header {
+      text-align: center;
+      padding: 1rem;
       background-color: #1f1f1f;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    header input {
-      padding: 8px;
-      width: 200px;
-      border-radius: 5px;
-      border: none;
-      background-color: #2c2c2c;
-      color: #fff;
-    }
-
-    .categories {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin: 15px;
-    }
-
-    .categories button {
-      background-color: #333;
-      border: none;
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-    }
-
-    .categories button.active,
-    .categories button:hover {
-      background-color: #00bcd4;
-      color: #000;
     }
 
     .movie-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 15px;
-      padding: 20px;
-      flex-grow: 1;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 1rem;
     }
 
-    .movie-box {
+    .movie-card {
       background-color: #1e1e1e;
-      border-radius: 10px;
+      margin: 10px;
       padding: 10px;
+      border-radius: 8px;
+      width: 160px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .movie-card:hover {
+      transform: scale(1.05);
+    }
+
+    .movie-card img {
+      width: 100%;
+      border-radius: 5px;
+    }
+
+    .movie-card h3 {
+      font-size: 1rem;
       text-align: center;
     }
 
-    .movie-box img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      border-radius: 6px;
-    }
-
-    .movie-box h3 {
-      margin: 8px 0 4px;
-      font-size: 1em;
-    }
-
-    .movie-box p {
-      margin: 0;
-      font-size: 0.9em;
-      color: #bbb;
-    }
-
-    .movie-box time {
-      display: block;
-      font-size: 0.8em;
-      color: #888;
-    }
-
-    .admin-panel {
+    .movie-details {
+      padding: 1rem;
       display: none;
-      padding: 20px;
-      background-color: #1b1b1b;
-      border-top: 1px solid #333;
+      text-align: center;
     }
 
-    .admin-panel input, .admin-panel select {
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      background-color: #2a2a2a;
+    .movie-details iframe {
+      width: 90%;
+      height: 200px;
+      margin-bottom: 10px;
+    }
+
+    .watch-button {
+      background-color: #e50914;
+      color: white;
       border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
       border-radius: 5px;
-      color: #fff;
-    }
-
-    .admin-panel button {
-      width: 100%;
-      background-color: #00bcd4;
-      border: none;
-      padding: 10px;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      color: #000;
-    }
-
-    .toggle-admin {
-      background: none;
-      color: #00bcd4;
-      border: none;
-      font-size: 16px;
       cursor: pointer;
     }
 
-    footer {
-      background-color: #1a1a1a;
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #1f1f1f;
       display: flex;
       justify-content: space-around;
       padding: 10px 0;
-      position: sticky;
-      bottom: 0;
     }
 
-    footer button {
-      flex: 1;
-      padding: 10px;
-      background: #222;
+    .bottom-bar button {
+      background: none;
       border: none;
-      color: #fff;
-      font-weight: bold;
+      color: white;
+      font-size: 1rem;
       cursor: pointer;
     }
 
-    footer button.active {
-      background: #00bcd4;
-      color: #000;
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <input type="search" id="searchInput" placeholder="ابحث عن فيلم...">
-    <button class="toggle-admin" onclick="toggleAdmin()">+ إدارة الأفلام</button>
-  </header>
+<header>
+  <h1>📽️ موقع مشاهدة الأفلام</h1>
+</header>
 
-  <!-- التصنيفات -->
-  <div class="categories" id="categoryButtons">
-    <button class="active" onclick="filterMovies('الكل')">الكل</button>
-    <button onclick="filterMovies('أكشن')">أكشن</button>
-    <button onclick="filterMovies('دراما')">دراما</button>
-    <button onclick="filterMovies('كوميديا')">كوميديا</button>
-    <button onclick="filterMovies('خيال علمي')">خيال علمي</button>
+<!-- واجهة عرض الأفلام -->
+<div id="homePage" class="movie-grid">
+  <div class="movie-card" onclick="showDetails('fantastic')">
+    <img src="https://m.media-amazon.com/images/M/MV5BNzY1NzcxNjE2M15BMl5BanBnXkFtZTgwNjg5NDkzNjE@._V1_.jpg" alt="فنتاستك فور">
+    <h3>فنتاستك فور</h3>
   </div>
-
-  <!-- عرض الأفلام -->
-  <div class="movie-grid" id="moviesContainer">
-    <!-- يتم ملؤها تلقائيًا -->
+  <div class="movie-card" onclick="showDetails('nekadken')">
+    <img src="https://i.imgur.com/nkYdken.png" alt="نكدكن">
+    <h3>نكدكن</h3>
   </div>
-
-  <!-- صفحة الإدارة -->
-  <div class="admin-panel" id="adminPanel">
-    <h3>إضافة فيلم جديد</h3>
-    <form id="addMovieForm">
-      <input type="text" name="title" placeholder="اسم الفيلم" required>
-      <input type="url" name="poster" placeholder="رابط الصورة" required>
-      <select name="genre" required>
-        <option value="">-- اختر النوع --</option>
-        <option value="أكشن">أكشن</option>
-        <option value="دراما">دراما</option>
-        <option value="كوميديا">كوميديا</option>
-        <option value="خيال علمي">خيال علمي</option>
-      </select>
-      <input type="datetime-local" name="showtime" required>
-      <button type="submit">إضافة</button>
-    </form>
+  <div class="movie-card" onclick="showDetails('shater')">
+    <img src="https://i.imgur.com/shater.png" alt="الشاطر">
+    <h3>الشاطر</h3>
   </div>
+  <div class="movie-card" onclick="showDetails('badboys')">
+    <img src="https://m.media-amazon.com/images/M/MV5BNDE0Y2FkMjgtYmEzOS00OTcwLWI3ZjgtZGEzZTBiZjdmZDU0XkEyXkFqcGdeQXVyMjQzMzQzODY@._V1_.jpg" alt="باد كايز">
+    <h3>باد كايز</h3>
+  </div>
+</div>
 
-  <!-- شريط التنقل السفلي -->
-  <footer>
-    <button onclick="window.location.href='signup.html'">👤 إنشاء حساب</button>
-    <button class="active">🎬 الأفلام</button>
-  </footer>
+<!-- تفاصيل الفيلم -->
+<div id="movieDetails" class="movie-details"></div>
 
-  <script>
-    let allMovies = [];
+<!-- شريط التنقل السفلي -->
+<div class="bottom-bar">
+  <button onclick="navigate('home')">🏠 الرئيسية</button>
+  <button onclick="navigate('search')">🔍 البحث</button>
+  <button onclick="navigate('categories')">🎞️ التصنيفات</button>
+  <button onclick="navigate('account')">👤 الحساب</button>
+</div>
 
-    async function fetchMovies() {
-      const res = await fetch('/api/movies');
-      allMovies = await res.json();
-      displayMovies(allMovies);
+<script>
+  const movies = {
+    fantastic: {
+      name: 'فنتاستك فور',
+      img: 'https://m.media-amazon.com/images/M/MV5BNzY1NzcxNjE2M15BMl5BanBnXkFtZTgwNjg5NDkzNjE@._V1_.jpg',
+      trailer: 'https://www.youtube.com/embed/POBI7OhGB18',
+      full: 'https://example.com/fantastic.mp4'
+    },
+    nekadken: {
+      name: 'نكدكن',
+      img: 'https://i.imgur.com/nkYdken.png',
+      trailer: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      full: 'https://example.com/nekadken.mp4'
+    },
+    shater: {
+      name: 'الشاطر',
+      img: 'https://i.imgur.com/shater.png',
+      trailer: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      full: 'https://example.com/shater.mp4'
+    },
+    badboys: {
+      name: 'باد كايز',
+      img: 'https://m.media-amazon.com/images/M/MV5BNDE0Y2FkMjgtYmEzOS00OTcwLWI3ZjgtZGEzZTBiZjdmZDU0XkEyXkFqcGdeQXVyMjQzMzQzODY@._V1_.jpg',
+      trailer: 'https://www.youtube.com/embed/jKCj3XuPG8M',
+      full: 'https://example.com/badboys.mp4'
     }
+  };
 
-    function displayMovies(movies) {
-      const container = document.getElementById('moviesContainer');
-      container.innerHTML = "";
-      movies.forEach(movie => {
-        const box = document.createElement('div');
-        box.className = 'movie-box';
-        box.innerHTML = `
-          <img src="${movie.poster}" alt="${movie.title}">
-          <h3>${movie.title}</h3>
-          <p>${movie.genre}</p>
-          <time>العرض: ${new Date(movie.showtime).toLocaleString('ar-IQ')}</time>
-        `;
-        container.appendChild(box);
-      });
-    }
+  function showDetails(key) {
+    const movie = movies[key];
+    document.getElementById('homePage').style.display = 'none';
 
-    function toggleAdmin() {
-      const panel = document.getElementById('adminPanel');
-      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-    }
+    document.getElementById('movieDetails').innerHTML = `
+      <h2>${movie.name}</h2>
+      <img src="${movie.img}" width="200"><br><br>
+      <iframe src="${movie.trailer}" frameborder="0" allowfullscreen></iframe><br>
+      <button class="watch-button" onclick="window.open('${movie.full}', '_blank')">🎬 مشاهدة الفيلم</button>
+    `;
+    document.getElementById('movieDetails').style.display = 'block';
+  }
 
-    function filterMovies(genre) {
-      document.querySelectorAll('.categories button').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      if (genre === 'الكل') {
-        displayMovies(allMovies);
-      } else {
-        displayMovies(allMovies.filter(m => m.genre === genre));
-      }
-    }
-
-    document.getElementById('addMovieForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const movie = Object.fromEntries(formData.entries());
-
-      const res = await fetch('/api/movies', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(movie)
-      });
-
-      if (res.ok) {
-        alert("تمت إضافة الفيلم!");
-        e.target.reset();
-        fetchMovies();
-      } else {
-        alert("فشل في الإضافة.");
-      }
-    });
-
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      const keyword = e.target.value.toLowerCase();
-      displayMovies(allMovies.filter(m => m.title.toLowerCase().includes(keyword)));
-    });
-
-    fetchMovies();
-  </script>
+  function navigate(page) {
+    alert(`تم الضغط على: ${page}`);
+  }
+</script>
 
 </body>
 </html>
